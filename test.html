@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Tests</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a2332;
+      --pass: #3dd68c;
+      --pass-bg: #3dd68c22;
+      --text: #e7ecf3;
+      --muted: #8b9bb4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+
+    .summary {
+      color: var(--muted);
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+
+    .test {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--pass-bg);
+      border: 1px solid var(--pass);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      background: var(--pass);
+      color: #0b1a12;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .name { font-family: ui-monospace, Consolas, monospace; }
+
+    .ok {
+      margin-top: 20px;
+      text-align: center;
+      color: var(--pass);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Simple Tests</h1>
+    <p class="summary" id="summary">Çalıştırılıyor…</p>
+    <div id="results"></div>
+    <p class="ok" id="ok"></p>
+  </div>
+
+  <script>
+    function assertEqual(actual, expected, name) {
+      if (actual !== expected) {
+        throw new Error(name + ": expected " + expected + ", got " + actual);
+      }
+    }
+
+    const tests = [
+      {
+        name: "test_addition",
+        run: () => assertEqual(1 + 1, 2, "test_addition"),
+      },
+      {
+        name: "test_string",
+        run: () => assertEqual("hello".toUpperCase(), "HELLO", "test_string"),
+      },
+    ];
+
+    const results = document.getElementById("results");
+    let passed = 0;
+
+    for (const test of tests) {
+      try {
+        test.run();
+        passed += 1;
+        results.innerHTML += `
+          <div class="test">
+            <span class="badge">PASS</span>
+            <span class="name">${test.name}</span>
+          </div>`;
+      } catch (err) {
+        results.innerHTML += `
+          <div class="test" style="border-color:#ff6b6b;background:#ff6b6b22">
+            <span class="badge" style="background:#ff6b6b;color:#1a0b0b">FAIL</span>
+            <span class="name">${err.message}</span>
+          </div>`;
+      }
+    }
+
+    document.getElementById("summary").textContent =
+      `Ran ${tests.length} tests in 0.000s`;
+    document.getElementById("ok").textContent =
+      passed === tests.length ? "OK" : `${tests.length - passed} failed`;
+  </script>
+</body>
+</html>
